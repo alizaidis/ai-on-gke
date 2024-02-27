@@ -76,3 +76,20 @@ spec:
     - effect: NoSchedule
       key: nvidia.com/gpu
       value: "true"
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ResourceFlavor
+metadata:
+  name: gpu-a100-dws-ondemand
+spec:
+  nodeLabels:
+    cloud.google.com/gke-accelerator: nvidia-tesla-a100
+    cloud.google.com/gke-provisioning: standard
+    resource-type: dws-ondemand
+  nodeTaints:
+    - effect: NoSchedule
+      key: nvidia.com/gpu
+      value: "true"
+    - effect: NoSchedule
+      key: dws-ondemand
+      value: "true"

@@ -48,6 +48,24 @@ variable "accelerator_count" {
   default     = 2
 }
 
+# variable "dws_machine_type" {
+#   type        = string
+#   description = "The machine type to use."
+#   default     = "a2-highgpu-2g"
+# }
+
+# variable "dws_accelerator" {
+#   type        = string
+#   description = "The GPU accelerator to use."
+#   default     = "nvidia-tesla-a100"
+# }
+
+# variable "dws_accelerator_count" {
+#   type        = number
+#   description = "The number of accelerators per machine."
+#   default     = 2
+# }
+
 # Pattern adopted from https://github.com/GoogleCloudPlatform/hpc-toolkit/blob/main/community/modules/scheduler/gke-cluster/variables.tf
 
 variable "reserved_taints" {
@@ -91,6 +109,20 @@ variable "spot_taints" {
     effect      = "NO_SCHEDULE"
   }]
 }
+
+# variable "dws_ondemand_taints" {
+#   description = "Taints to be applied to the DWS on-demand node pool."
+#   type = list(object({
+#     key         = string
+#     taint_value = any
+#     effect      = string
+#   }))
+#   default = [{
+#     key         = "dws-ondemand"
+#     taint_value = true
+#     effect      = "NO_SCHEDULE"
+#   }]
+# }
 
 variable "machine_reservation_count" {
   type        = number

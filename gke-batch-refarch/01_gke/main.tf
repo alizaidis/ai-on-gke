@@ -304,6 +304,60 @@ resource "google_container_node_pool" "spot_np" {
   }
 }
 
+# Nodepool to support Dynamic Workload Scheduler workloads using on-demand instances with GPUs
+# resource "google_container_node_pool" "dws_ondemand_np" {
+#   depends_on = [google_container_node_pool.spot_np]
+#   provider   = google-beta
+#   name       = "dws-ondemand-np"
+#   project    = var.project_id
+#   cluster    = resource.google_container_cluster.gke_batch.name
+#   location   = var.region
+#   queued_provisioning {
+#     enabled = true
+#   }
+#   node_config {
+#     machine_type = var.dws_machine_type
+#     dynamic "taint" {
+#       for_each = var.dws_ondemand_taints
+#       content {
+#         key    = taint.value.key
+#         value  = taint.value.taint_value
+#         effect = taint.value.effect
+#       }
+#     }
+#     labels = {
+#       "resource-type" : "dws-ondemand"
+#     }
+
+#     guest_accelerator {
+#       type  = var.dws_accelerator
+#       count = var.dws_accelerator_count
+#     }
+
+#     oauth_scopes = [
+#       "https://www.googleapis.com/auth/cloud-platform"
+#     ]
+#   }
+
+#   autoscaling {
+#     total_min_node_count = 0
+#     total_max_node_count = 1000
+#     location_policy      = "ANY"
+#   }
+
+#   timeouts {
+#     create = "30m"
+#     update = "20m"
+#   }
+
+#   lifecycle {
+#     ignore_changes = [
+#       node_config[0].labels,
+#       node_config[0].taint,
+#     ]
+#   }
+# }
+
 # Cloud Router and NAT for private nodes to communicate externally
 resource "google_compute_router" "router" {
   name    = "router"
