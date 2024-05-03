@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: windows-ping-2019
+  labels:
+    app: windows-ping-2019
+spec:
+  parallelism: 3
+  completions: 3
+  completionMode: Indexed
+  template:
+    metadata:
+      labels:
+        app: windows-ping-2022
+    spec:
+      nodeSelector:
+        kubernetes.io/os: windows
+      containers:
+      - name: windows-ping-server
+        image: mcr.microsoft.com/windows/nanoserver:ltsc2019
+        command: ["ping", "-n", "100000000", "127.0.0.1"]
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+      restartPolicy: Never

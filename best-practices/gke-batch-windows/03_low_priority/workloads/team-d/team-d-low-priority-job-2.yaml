@@ -1,0 +1,70 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: team-d-low-priority-svc-2
+  namespace: team-d
+spec:
+  clusterIP: None
+  selector:
+    job-name: team-d-low-priority-job-2
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: team-d # Job under team-d namespace
+  name: team-d-low-priority-job-2
+  labels:
+    kueue.x-k8s.io/queue-name: lq-team-d-lp # Point to the LocalQueue for team-d
+spec:
+  backoffLimit: 20
+  podFailurePolicy:
+    rules:
+      - action: Ignore
+        onPodConditions:
+          - type: DisruptionTarget
+  suspend: true # Set to true to allow Kueue to control the Job when it starts
+  parallelism: 2
+  completions: 2
+  completionMode: Indexed
+  template:
+    spec:
+      subdomain: team-d-low-priority-svc-2
+      serviceAccountName: team-d-ksa
+      tolerations:
+        - effect: NoSchedule
+          key: kubernetes.io/os
+          value: "windows"
+        - key: "reserved"
+          operator: "Exists"
+          effect: NoSchedule
+        - key: "spot"
+          operator: "Exists"
+          effect: NoSchedule
+      containers:
+        - name: windows-ping-server
+          image: mcr.microsoft.com/windows/nanoserver:ltsc2019
+          command: ["ping", "-n", "100000000", "127.0.0.1"]
+          resources:
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+      restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/os: windows
