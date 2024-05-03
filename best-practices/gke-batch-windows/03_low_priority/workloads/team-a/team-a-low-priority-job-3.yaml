@@ -45,9 +45,9 @@ spec:
       subdomain: team-a-low-priority-svc-3
       serviceAccountName: team-a-ksa
       tolerations:
-        - effect: NoSchedule
-          key: kubernetes.io/os
+        - key: kubernetes.io/os
           value: "windows"
+          effect: NoSchedule
         - key: "reserved"
           operator: "Exists"
           effect: NoSchedule

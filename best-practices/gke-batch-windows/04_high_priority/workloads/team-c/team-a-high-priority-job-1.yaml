@@ -46,9 +46,9 @@ spec:
       subdomain: team-c-high-priority-svc-1
       serviceAccountName: team-c-ksa
       tolerations:
-        - effect: NoSchedule
-          key: kubernetes.io/os
+        - key: kubernetes.io/os
           value: "windows"
+          effect: NoSchedule
         - key: "ondemand"
           operator: "Exists"
           effect: NoSchedule
